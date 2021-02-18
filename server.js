@@ -1,33 +1,23 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const { json } = require('express');
+let express = require('express');
+let fs = require('fs');
+let path = require('path');
 //either use the enviroments port number or default to Port number 7000
-const PORT = process.env.PORT || 7000;
+var PORT = process.env.PORT || 8080;
 //set the express function
-let app = express();
-//require the dataBase path
-const dataBase = require('./db/db.json');
+var app = express();
+
 
 app.use(express.json());
-app.use(express.urlencoded({extended: false}))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
 
-//read the db.json
+//store the database variable so we can set the id to length of database later
 const dataBaseNotes = JSON.parse(
-fs.readFileSync(path.join(__dirname, '/db/db.json'), 
-    (err, data) => {
-    if (err) throw err;
-})
-);
-
-//write the new database notes to the database
-const dataBaseUpdate = dataBaseNotes => {
-fs.writeFileSync(path.join(__dirname, './db/db.json'),JSON.stringify(dataBaseNotes),
-    err => {
-    if (err) throw err;
-    }
-);
-};
+    fs.readFileSync(path.join(__dirname, "/db/db.json"), (err, data) => {
+        if (err) throw err;
+    })
+    );
 
 //logic for the assets 
 //styles.css
@@ -47,34 +37,43 @@ app.get('/notes', function (req, res) {
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, './index.html'));
 }); 
-app.get('/api/notes', function (req, res) {
-    return res.json(dataBaseNotes);
-});
+app.get("/api/notes/", function(req, res) {
+    res.sendFile(path.join(__dirname, "./db/db.json"));
+  });
 //delete logic
-app.delete("/api/notes/:id", function(req, res){
+app.delete("/api/notes:id", function(req, res) {
     let id = req.params.id;
-    fs.readFile('/db/db.json', 'utf-8', (err, data) => {
-        let notesArr = JSON.parse(data);
-
-        for(let i = 0; i < notesArr.length; i++){
-            if(notesArr[i].id === id) {
-                notesArr.splice(i, 1);
-            }
+    console.log(id)
+    fs.readFile("./db/db.json", 'utf-8',(err,data)=> {
+        if(err) {
+            throw err
         }
-        fs.writeFile('/db/db.json', JSON.stringify(notesArr), () => {})
-        res.json(notesArr);
-    })
-});
+      let notesArr = JSON.parse(data)
+      console.log(52);
+      for (let i = 0; i < notesArr.length; i++) {
+        
+        if (notesArr[i].id == id){
+          notesArr.splice(i, 1)
+          console.log(55)
+          }
+        }
+        fs.writeFile("./db/db.json", JSON.stringify(notesArr), ()=>{})
+        res.json(notesArr)
+      });
+})
 
 //post logic
 app.post("/api/notes", function(req, res) {
     let newNote = req.body;
-    let id = dataBaseNotes.length;
-    newNote.id = id;
-    dataBaseNotes.push(newNote);
-    dataBaseUpdate(dataBaseNotes);
-    return res.json(dataBaseNotes);
-    });
+    newNote.id = dataBaseNotes.length;
+    fs.readFile("./db/db.json", 'utf-8',(err,data)=> {
+      let dataBase = JSON.parse(data)
+      dataBase.push(newNote)
+      fs.writeFile("./db/db.json", JSON.stringify(dataBase), ()=>{})
+      res.json(newNote);
+    })
+
+  });
 
 //show what Port is being listened for 
 app.listen(PORT, function() {

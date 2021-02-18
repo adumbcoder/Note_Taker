@@ -41,6 +41,6 @@
   ### Email:
   pickensprogramming@gmail.com
 	
-![alt text](screenshots\note-taker1.PNG)
-![alt text](screenshots\note-taker2.PNG)
+![alt text](https://github.com/adumbcoder/Note_Taker/blob/master/screenshots/note-taker1.PNG)
+![alt text](https://github.com/adumbcoder/Note_Taker/blob/master/screenshots/note-taker2.PNG)
   -[Back to Top](#)

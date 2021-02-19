@@ -67,6 +67,7 @@ app.post("/api/notes", function(req, res) {
     let newNote = req.body;
     newNote.id = dataBaseNotes.length;
     fs.readFile("./db/db.json", 'utf-8',(err,data)=> {
+      if(err) throw err;
       let dataBase = JSON.parse(data)
       dataBase.push(newNote)
       fs.writeFile("./db/db.json", JSON.stringify(dataBase), ()=>{})

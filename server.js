@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //store the database variable so we can set the id to length of database later
 const dataBaseNotes = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "/db/db.json"), (err, data) => {
+    fs.readFileSync(path.join(__dirname, "./db/db.json"), (err, data) => {
         if (err) throw err;
     })
     );

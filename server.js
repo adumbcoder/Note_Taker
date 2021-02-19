@@ -7,17 +7,17 @@ var PORT = process.env.PORT || 8080;
 //set the express function
 var app = express();
 
-
+let id = 0;
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //store the database variable so we can set the id to length of database later
-const dataBaseNotes = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "./db/db.json"), (err, data) => {
-        if (err) throw err;
-    })
-    );
+// const dataBaseNotes = JSON.parse(
+//     fs.readFileSync(path.join(__dirname, "./db/db.json"), (err, data) => {
+//         if (err) throw err;
+//     })
+//     );
 
 //logic for the assets 
 //styles.css
@@ -49,12 +49,12 @@ app.delete("/api/notes:id", function(req, res) {
             throw err
         }
       let notesArr = JSON.parse(data)
-      console.log(52);
+      // console.log(52);
       for (let i = 0; i < notesArr.length; i++) {
         
         if (notesArr[i].id == id){
           notesArr.splice(i, 1)
-          console.log(55)
+          // console.log(55)
           }
         }
         fs.writeFile("./db/db.json", JSON.stringify(notesArr), ()=>{})
@@ -65,7 +65,8 @@ app.delete("/api/notes:id", function(req, res) {
 //post logic
 app.post("/api/notes", function(req, res) {
     let newNote = req.body;
-    newNote.id = dataBaseNotes.length;
+    newNote.id = ++id;
+    console.log(id)
     fs.readFile("./db/db.json", 'utf-8',(err,data)=> {
       if(err) throw err;
       let dataBase = JSON.parse(data)
